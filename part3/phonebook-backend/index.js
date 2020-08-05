@@ -82,7 +82,7 @@ app.post('/api/persons', (req, res) => {
   }
 
   persons.concat(person)
-    
+
   res.json(person)
 })
 
@@ -103,7 +103,7 @@ app.delete('/api/persons/:id', (req, res) => {
   res.status(204).end()
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

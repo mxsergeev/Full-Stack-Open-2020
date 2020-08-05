@@ -9,6 +9,7 @@
     "build:ui": "rm -rf build && cd ../phonebook && npm run build && cp -r build ../phonebook-backend",
     "deploy": "git push heroku master",
     "deploy:prod": "",
+    "logs:prod": "heroku logs --tail",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxim Sergeev",
