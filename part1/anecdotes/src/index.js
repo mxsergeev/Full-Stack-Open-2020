@@ -6,8 +6,11 @@ const App = ({ anecdotes }) => {
   const [votes, setVotes] = useState(new Array(anecdotes.length + 1).join('0').split('').map(parseFloat));
 
   const pickRandomAnecdote = () => {
-    const randomNumber = Math.floor(Math.random() * anecdotes.length);
-    setSelected(randomNumber);
+    const random = Math.floor(Math.random() * anecdotes.length);
+    while (random == selected) {
+      random = Math.floor(Math.random() * anecdotes.length);
+    }
+    setSelected(random);
   }
   const addVote = () => {
     const copy = [...votes];

@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "sofia",
-      "number": "9999999",
+      "number": "44444444",
       "id": 2
     },
     {
@@ -31,19 +31,9 @@
       "id": 9
     },
     {
-      "name": "sfsdf",
-      "number": "13323123",
-      "id": 10
-    },
-    {
       "name": "sdfsdf",
       "number": "323",
       "id": 11
-    },
-    {
-      "name": "fsdf",
-      "number": "3235323",
-      "id": 12
     }
   ]
 }
