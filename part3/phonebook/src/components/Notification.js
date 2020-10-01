@@ -2,6 +2,7 @@ import React from 'react'
 
 const Notification = ({ notification }) => {
     const notificationStyle = {
+        whiteSpace: 'pre-wrap',
         opacity: 0.8,
         width: '50%',
         padding: 5,
