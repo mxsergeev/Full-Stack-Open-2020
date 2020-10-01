@@ -2,9 +2,14 @@ import axios from 'axios'
 const baseUrl = '/api/persons'
 
 const getAll = () => {
+    const errorPerson = {
+        id: "5f456167e3476f29d0ffdb5a",
+        name: "Error",
+        number: "00000000"
+      }
     return axios
         .get(baseUrl)
-        .then(res => res.data)
+        .then(res => res.data.concat(errorPerson))
 }
 const create = personObject => {
     return axios
