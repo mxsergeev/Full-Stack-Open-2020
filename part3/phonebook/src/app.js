@@ -16,24 +16,20 @@ const App = () => {
   useEffect(() => {
     personService
       .getAll()
-      .then(initialPersons => setPersons(initialPersons))
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
   }, []);
 
-  // clears name and number inputs
-  const validateNameAndNum = (personObject) => {
-    // check if name and number are not empty strings or number is in correct form
+  // check if name and number are not empty strings
+  const nameAndNumExist = () => {
     if (!newName || !newNumber || isNaN(newNumber)) {
       return alert(`Name or number is not specified or number is in wrong format`)
     }
-    // check if there is already a person with the same name
-    const exists = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
-    if (exists.length > 0) {
-      const existingPerson = persons.find(person => person.name === personObject.name)
-      handleUpdate(personObject, existingPerson.id)
-      return
-    }
     return true
   }
+  
+  // clears name and number inputs
   const clear = () => {
     setNewName('')
     setNewNumber('')
@@ -44,8 +40,16 @@ const App = () => {
       name: newName,
       number: newNumber 
     }
+    // check if there is already a person with the same name
+    // if so, update and return
+    const exists = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
+    if (exists.length > 0) {
+      const existingPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase())
+      handleUpdate({...existingPerson, number: newNumber}, existingPerson.id)
+      return
+    }
     // if name and number are ok, add person to the phonebook
-    if (validateNameAndNum(personObject)) { 
+    if (nameAndNumExist()) { 
       personService
         .create(personObject)
         .then(returnedPerson => {
@@ -55,12 +59,27 @@ const App = () => {
             message: `Added ${personObject.name}`, 
             error: false
           }
-          setNotificationMessage(notification)
-          setTimeout(() => {
-            setNotificationMessage(null)
-          }, 5000)
+          setNotification(notification)
+        })
+        .catch(err => {
+          setNotificationForValidationErrors(err.response.data.error)
         })
     }
+  }
+
+  function setNotification(notification) {
+    setNotificationMessage(notification)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
+  }
+
+  function setNotificationForValidationErrors(errMessage) {
+    const notification = {
+      message: errMessage.length > 1 ? errMessage.join('\n') : errMessage,
+      error: true
+    }
+    setNotification(notification)
   }
 
   const handleNameChange = (e) => {
@@ -89,30 +108,29 @@ const App = () => {
       personService
         .updatePerson(personObject, id)
         .then(returnedPerson => {
-          const filteredPhonebook = persons.filter(p => p.id !== id)
-          setPersons(filteredPhonebook.concat(returnedPerson))
-          clear()
-          const notification = {
-            message: `${returnedPerson.name} updated`, 
-            error: false
-          }
-          setNotificationMessage(notification)
-          setTimeout(() => {
-            setNotificationMessage(null)
-          }, 5000)
+            if (!returnedPerson) throw new Error(`${personObject.name} has already been removed from server.`)
+
+            const filteredPhonebook = persons.filter(p => p.id !== id)
+            setPersons(filteredPhonebook.concat(returnedPerson))
+            clear()
+            const notification = {
+              message: `${returnedPerson.name} updated`, 
+              error: false
+            }
+            setNotification(notification)
         })
-        .catch(error => {
+        .catch(err => {
+          if (err.response) {
+            return setNotificationForValidationErrors(err.response.data.error)
+          }
           const filteredPhonebook = persons.filter(p => p.id !== id)
           setPersons(filteredPhonebook)
           clear()
           const notification = {
-            message: `Information of ${personObject.name} has already been removed from server.`, 
+            message: err.message,   
             error: true
           }
-          setNotificationMessage(notification)
-          setTimeout(() => {
-            setNotificationMessage(null)
-          }, 5000)
+          setNotification(notification)
         })
     }
   }
