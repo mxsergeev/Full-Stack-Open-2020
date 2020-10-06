@@ -12,5 +12,7 @@ module.exports = {
   },
   rules: {
     semi: [2, 'never'],
+    'linebreak-style': ['error', 'windows'],
+    'no-console': 'off',
   },
 }
